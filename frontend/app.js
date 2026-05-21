@@ -5,6 +5,8 @@ const state = {
   wish: [],
 };
 
+const knownDate = new Date(2026, 1, 15);
+
 const api = {
   async get(path) {
     const response = await fetch(path);
@@ -49,6 +51,27 @@ function formatDate(value) {
     month: "2-digit",
     day: "2-digit",
   }).format(new Date(value));
+}
+
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function daysBetween(from, to) {
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  return Math.max(0, Math.round((startOfDay(to) - startOfDay(from)) / millisecondsPerDay));
+}
+
+function renderAnniversary() {
+  const today = startOfDay(new Date());
+  const knownDays = daysBetween(knownDate, today) + 1;
+  let nextAnniversary = new Date(today.getFullYear(), 1, 15);
+  if (nextAnniversary < today) {
+    nextAnniversary = new Date(today.getFullYear() + 1, 1, 15);
+  }
+
+  $("#known-days").textContent = knownDays;
+  $("#next-anniversary-days").textContent = daysBetween(today, nextAnniversary);
 }
 
 function escapeHtml(value) {
@@ -244,6 +267,7 @@ function renderHome() {
 }
 
 function renderAll() {
+  renderAnniversary();
   renderHome();
   renderFood();
   renderTravel();

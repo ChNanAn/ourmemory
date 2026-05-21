@@ -4,4 +4,5 @@ __pycache__/
 backend/data/
 backend/uploads/*
 !backend/uploads/.gitkeep
+resource/
 .env

@@ -136,7 +136,7 @@ def seed_demo_data() -> None:
                 "note": "散步、跑步、瑜伽或其他运动都可以记一点感受。",
             },
             {
-                "title": "探索不同的地方",
+                "title": "探索新地图",
                 "category": "旅游",
                 "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
                 "duoduo_element": "朵朵喜欢去看看不一样的地方",
@@ -145,14 +145,14 @@ def seed_demo_data() -> None:
             {
                 "title": "积木时间",
                 "category": "积木",
-                "image": None,
+                "image": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=900&q=80",
                 "duoduo_element": "把搭过的作品留个档",
                 "note": "可以记录套装名称、完成进度、成品照片和缺件情况。",
             },
             {
                 "title": "拼图进度",
                 "category": "拼图",
-                "image": None,
+                "image": "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=900&q=80",
                 "duoduo_element": "慢慢拼出来的小成就",
                 "note": "记录片数、主题、完成进度和最后成品。",
             },
@@ -165,6 +165,12 @@ def seed_demo_data() -> None:
             },
         ]
         existing_hobby_titles = set(db.scalars(select(Hobby.title)))
+        old_travel_hobby = db.scalar(select(Hobby).where(Hobby.title == "探索不同的地方").limit(1))
+        if old_travel_hobby and "探索新地图" not in existing_hobby_titles:
+            old_travel_hobby.title = "探索新地图"
+            existing_hobby_titles.add("探索新地图")
+        elif old_travel_hobby:
+            db.delete(old_travel_hobby)
         if "朵朵的歌单" in existing_hobby_titles:
             demo_hobby = db.scalar(select(Hobby).where(Hobby.title == "朵朵的歌单").limit(1))
             if demo_hobby:
@@ -175,6 +181,14 @@ def seed_demo_data() -> None:
         for hobby_seed in hobby_seeds:
             if hobby_seed["title"] not in existing_hobby_titles:
                 db.add(Hobby(**hobby_seed))
+        block_hobby = db.scalar(select(Hobby).where(Hobby.title == "积木时间").limit(1))
+        if block_hobby and not block_hobby.image:
+            block_hobby.image = "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=900&q=80"
+        puzzle_hobby = db.scalar(select(Hobby).where(Hobby.title == "拼图进度").limit(1))
+        if puzzle_hobby and puzzle_hobby.image == "/static/images/puzzle-cover.jpg":
+            puzzle_hobby.image = "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=900&q=80"
+        elif puzzle_hobby and not puzzle_hobby.image:
+            puzzle_hobby.image = "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=900&q=80"
         db.commit()
     finally:
         db.close()

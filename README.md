@@ -73,6 +73,8 @@ docker compose up -d --build
 
 SQLite 数据会保存在 `backend/data/`，上传图片会保存在 `backend/uploads/`。
 
+爱好、旅行和美食里的图片通过页面上传，文件会保存在服务器 `backend/uploads/`，数据库里保存图片访问地址。不要把隐私图片放进仓库。
+
 ### 4. 构建依赖下载失败
 
 如果服务器在 `pip install` 时失败，通常是网络连接 PyPI 不稳定。项目 Dockerfile 已配置阿里云 PyPI 镜像，可以更新代码后重新构建：

@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
+    <div class="soft-hearts" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <div class="app-shell">
       <header class="topbar">
         <div>
@@ -26,22 +32,28 @@
         <section class="view active" id="home-view">
           <div class="welcome-panel">
             <div>
-              <p class="eyebrow">今天也有值得留下的片段</p>
-              <h2>把吃过的、走过的、和朵朵有关的小兴趣，都放在一起。</h2>
+              <p class="eyebrow">从 2 月 15 日开始</p>
+              <h2>把和朵朵有关的小日子，轻轻收好。</h2>
             </div>
-            <div class="stats-grid">
-              <div class="stat"><span id="food-count">0</span><small>美食</small></div>
-              <div class="stat"><span id="travel-count">0</span><small>旅行</small></div>
-              <div class="stat"><span id="hobby-count">0</span><small>爱好</small></div>
-              <div class="stat"><span id="wish-count">0</span><small>愿望</small></div>
+            <div class="home-summary">
+              <div class="stats-grid">
+                <div class="stat"><span id="food-count">0</span><small>美食</small></div>
+                <div class="stat"><span id="travel-count">0</span><small>旅行</small></div>
+                <div class="stat"><span id="hobby-count">0</span><small>爱好</small></div>
+                <div class="stat"><span id="wish-count">0</span><small>愿望</small></div>
+              </div>
+              <div class="anniversary-card">
+                <p>认识第 <strong id="known-days">0</strong> 天</p>
+                <span>距离下一个 2.15 还有 <strong id="next-anniversary-days">0</strong> 天</span>
+              </div>
             </div>
           </div>
 
           <div class="duoduo-panel">
             <div>
               <p class="eyebrow">朵朵兴趣角</p>
-              <h2>把朵朵提过的好东西顺手记下来。</h2>
-              <p>旗袍、种花、画画、运动、旅游探索、积木、拼图、拍照，都可以变成一条轻松的爱好记录。</p>
+              <h2>她喜欢的，都值得慢慢记。</h2>
+              <p>旗袍、种花、画画、运动、探索新地方、积木、拼图、拍照。</p>
             </div>
             <div class="duoduo-tags">
               <span>旗袍</span>
@@ -53,6 +65,11 @@
               <span>拼图</span>
               <span>拍照</span>
             </div>
+          </div>
+
+          <div class="secret-note">
+            <span>悄悄话</span>
+            <p>2.15 那天开始的小默契，还在继续。</p>
           </div>
 
           <div class="section-head">
@@ -116,6 +133,7 @@
           </div>
         </section>
       </main>
+      <footer class="footer-note">给朵朵，也给慢慢变好的每一天。</footer>
     </div>
 
     <template id="empty-template">
