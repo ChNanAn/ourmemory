@@ -71,6 +71,24 @@ docker compose up -d --build
 
 SQLite 数据会保存在 `backend/data/`，上传图片会保存在 `backend/uploads/`。
 
+### 4. 构建依赖下载失败
+
+如果服务器在 `pip install` 时失败，通常是网络连接 PyPI 不稳定。项目 Dockerfile 已配置阿里云 PyPI 镜像，可以更新代码后重新构建：
+
+```bash
+git pull
+docker compose build --no-cache
+docker compose up -d
+```
+
+旧版命令：
+
+```bash
+git pull
+docker-compose build --no-cache
+docker-compose up -d
+```
+
 ## API
 
 - `GET /api/food`
