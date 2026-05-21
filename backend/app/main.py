@@ -14,10 +14,13 @@ from .models import Food, Hobby, Travel, Wish
 from .schemas import (
     FoodCreate,
     FoodOut,
+    FoodUpdate,
     HobbyCreate,
     HobbyOut,
+    HobbyUpdate,
     TravelCreate,
     TravelOut,
+    TravelUpdate,
     WishCreate,
     WishOut,
     WishUpdate,
@@ -233,6 +236,20 @@ def get_food(food_id: int, db: Session = Depends(get_db)) -> Food:
     return food
 
 
+@app.patch("/api/food/{food_id}", response_model=FoodOut)
+def update_food(food_id: int, payload: FoodUpdate, db: Session = Depends(get_db)) -> Food:
+    food = db.get(Food, food_id)
+    if not food:
+        raise HTTPException(status_code=404, detail="Food not found")
+
+    data = payload.model_dump(exclude_unset=True)
+    for key, value in data.items():
+        setattr(food, key, value)
+    db.commit()
+    db.refresh(food)
+    return food
+
+
 @app.delete("/api/food/{food_id}", status_code=204)
 def delete_food(food_id: int, db: Session = Depends(get_db)) -> None:
     food = db.get(Food, food_id)
@@ -264,6 +281,20 @@ def get_travel(travel_id: int, db: Session = Depends(get_db)) -> Travel:
     travel = db.get(Travel, travel_id)
     if not travel:
         raise HTTPException(status_code=404, detail="Travel not found")
+    return travel
+
+
+@app.patch("/api/travel/{travel_id}", response_model=TravelOut)
+def update_travel(travel_id: int, payload: TravelUpdate, db: Session = Depends(get_db)) -> Travel:
+    travel = db.get(Travel, travel_id)
+    if not travel:
+        raise HTTPException(status_code=404, detail="Travel not found")
+
+    data = payload.model_dump(exclude_unset=True)
+    for key, value in data.items():
+        setattr(travel, key, value)
+    db.commit()
+    db.refresh(travel)
     return travel
 
 
@@ -332,6 +363,20 @@ def get_hobby(hobby_id: int, db: Session = Depends(get_db)) -> Hobby:
     hobby = db.get(Hobby, hobby_id)
     if not hobby:
         raise HTTPException(status_code=404, detail="Hobby not found")
+    return hobby
+
+
+@app.patch("/api/hobby/{hobby_id}", response_model=HobbyOut)
+def update_hobby(hobby_id: int, payload: HobbyUpdate, db: Session = Depends(get_db)) -> Hobby:
+    hobby = db.get(Hobby, hobby_id)
+    if not hobby:
+        raise HTTPException(status_code=404, detail="Hobby not found")
+
+    data = payload.model_dump(exclude_unset=True)
+    for key, value in data.items():
+        setattr(hobby, key, value)
+    db.commit()
+    db.refresh(hobby)
     return hobby
 
 
