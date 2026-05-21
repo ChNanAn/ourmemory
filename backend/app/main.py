@@ -26,7 +26,9 @@ from .schemas import (
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 BACKEND_DIR = Path(__file__).resolve().parents[1]
-FRONTEND_DIR = ROOT_DIR / "frontend"
+FRONTEND_DIR = BACKEND_DIR / "frontend"
+if not FRONTEND_DIR.exists():
+    FRONTEND_DIR = ROOT_DIR / "frontend"
 UPLOAD_DIR = BACKEND_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
