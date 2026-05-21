@@ -25,6 +25,7 @@ class FoodOut(FoodBase):
 class TravelBase(BaseModel):
     city: str = Field(min_length=1, max_length=120)
     images: list[str] = Field(default_factory=list)
+    photo_note: str = ""
     story: str = ""
     date: datetime | None = None
 
@@ -37,6 +38,7 @@ class TravelOut(BaseModel):
     id: int
     city: str
     images: list[str]
+    photo_note: str
     story: str
     date: datetime
     created_at: datetime
@@ -57,6 +59,25 @@ class WishOut(BaseModel):
     id: int
     content: str
     done: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class HobbyBase(BaseModel):
+    title: str = Field(min_length=1, max_length=120)
+    category: str = ""
+    image: str | None = None
+    duoduo_element: str = ""
+    note: str = ""
+
+
+class HobbyCreate(HobbyBase):
+    pass
+
+
+class HobbyOut(HobbyBase):
+    id: int
     created_at: datetime
 
     model_config = {"from_attributes": True}

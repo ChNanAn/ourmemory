@@ -1,11 +1,12 @@
 # Memory Life
 
-一个简单可运行的生活记录册 MVP，包含美食、旅行、愿望清单和图片上传。
+一个简单可运行的生活记录册 MVP，包含美食、旅行、爱好、愿望清单和图片上传。
 
 ## 功能
 
 - 美食记录：标题、图片、位置、备注、评分
-- 旅行记录：城市、日期、故事、多图
+- 旅行记录：城市、日期、多图、照片/文件说明、故事
+- 爱好记录：名称、分类、图片、和朵朵有关的点、备注
 - 愿望清单：新增、完成状态切换、删除
 - SQLite 本地数据存储
 - 本地 uploads 图片存储
@@ -40,6 +41,10 @@ docker run --rm -p 8000:8000 memory-life
 - `POST /api/travel`
 - `GET /api/travel/{id}`
 - `DELETE /api/travel/{id}`
+- `GET /api/hobby`
+- `POST /api/hobby`
+- `GET /api/hobby/{id}`
+- `DELETE /api/hobby/{id}`
 - `GET /api/wish`
 - `POST /api/wish`
 - `PATCH /api/wish/{id}`

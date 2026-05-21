@@ -6,14 +6,16 @@ from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
-from .models import Food, Travel, Wish
+from .models import Food, Hobby, Travel, Wish
 from .schemas import (
     FoodCreate,
     FoodOut,
+    HobbyCreate,
+    HobbyOut,
     TravelCreate,
     TravelOut,
     WishCreate,
@@ -45,36 +47,72 @@ app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 @app.on_event("startup")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
+    migrate_database()
     seed_demo_data()
+
+
+def migrate_database() -> None:
+    with engine.begin() as connection:
+        travel_columns = {
+            row[1]
+            for row in connection.exec_driver_sql("PRAGMA table_info(travels)").all()
+        }
+        if "photo_note" not in travel_columns:
+            connection.execute(text("ALTER TABLE travels ADD COLUMN photo_note TEXT DEFAULT ''"))
 
 
 def seed_demo_data() -> None:
     db = next(get_db())
     try:
         has_food = db.scalar(select(Food.id).limit(1))
-        if has_food:
-            return
+        has_travel = db.scalar(select(Travel.id).limit(1))
+        has_wish = db.scalar(select(Wish.id).limit(1))
+        has_hobby = db.scalar(select(Hobby.id).limit(1))
 
-        db.add_all(
-            [
+        if not has_food:
+            db.add(
                 Food(
                     title="周末早午餐",
                     image="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=80",
                     location="街角小店",
                     note="阳光很好，沙拉和咖啡都很清爽。",
                     rating=4,
-                ),
+                )
+            )
+        if not has_travel:
+            db.add(
                 Travel(
                     city="厦门",
                     images=[
                         "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
                     ],
+                    photo_note="海边照片，适合放一些当时的天气、路线或者文件说明。",
                     story="傍晚沿着海边慢慢走，风里有很舒服的咸味。",
                     date=datetime.utcnow(),
-                ),
-                Wish(content="找一个周末去海边看日落"),
-            ]
-        )
+                )
+            )
+        else:
+            demo_travel = db.scalar(select(Travel).where(Travel.city == "厦门").limit(1))
+            if demo_travel and not demo_travel.photo_note:
+                demo_travel.photo_note = "海边照片，适合放一些当时的天气、路线或者文件说明。"
+        if not has_wish:
+            db.add(Wish(content="找一个周末去海边看日落"))
+        if not has_hobby:
+            db.add(
+                Hobby(
+                    title="朵朵推荐的歌单",
+                    category="音乐",
+                    image="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80",
+                    duoduo_element="朵朵提过的几首歌",
+                    note="适合散步、通勤或者休息时慢慢听。",
+                )
+            )
+        else:
+            demo_hobby = db.scalar(select(Hobby).where(Hobby.title.in_(["朵朵的歌单", "朵朵推荐的歌单"])).limit(1))
+            if demo_hobby:
+                demo_hobby.title = "朵朵推荐的歌单"
+                demo_hobby.duoduo_element = "朵朵提过的几首歌"
+                demo_hobby.note = "适合散步、通勤或者休息时慢慢听。"
         db.commit()
     finally:
         db.close()
@@ -196,4 +234,35 @@ def delete_wish(wish_id: int, db: Session = Depends(get_db)) -> None:
     if not wish:
         raise HTTPException(status_code=404, detail="Wish not found")
     db.delete(wish)
+    db.commit()
+
+
+@app.get("/api/hobby", response_model=list[HobbyOut])
+def list_hobbies(db: Session = Depends(get_db)) -> list[Hobby]:
+    return list(db.scalars(select(Hobby).order_by(Hobby.created_at.desc())))
+
+
+@app.post("/api/hobby", response_model=HobbyOut, status_code=201)
+def create_hobby(payload: HobbyCreate, db: Session = Depends(get_db)) -> Hobby:
+    hobby = Hobby(**payload.model_dump())
+    db.add(hobby)
+    db.commit()
+    db.refresh(hobby)
+    return hobby
+
+
+@app.get("/api/hobby/{hobby_id}", response_model=HobbyOut)
+def get_hobby(hobby_id: int, db: Session = Depends(get_db)) -> Hobby:
+    hobby = db.get(Hobby, hobby_id)
+    if not hobby:
+        raise HTTPException(status_code=404, detail="Hobby not found")
+    return hobby
+
+
+@app.delete("/api/hobby/{hobby_id}", status_code=204)
+def delete_hobby(hobby_id: int, db: Session = Depends(get_db)) -> None:
+    hobby = db.get(Hobby, hobby_id)
+    if not hobby:
+        raise HTTPException(status_code=404, detail="Hobby not found")
+    db.delete(hobby)
     db.commit()
