@@ -405,6 +405,79 @@ textarea:focus {
   background: linear-gradient(135deg, var(--sage), var(--coral));
 }
 
+.record-gallery {
+  background: #fff7f4;
+}
+
+.record-thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 4px;
+}
+
+.record-thumbs img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.image-manager {
+  display: none;
+  margin: -2px 0 14px;
+  padding: 10px;
+  background: #fff7f4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.image-manager.active {
+  display: block;
+}
+
+.image-manager p {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.image-manager-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+  gap: 8px;
+}
+
+.image-manager-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.image-manager-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.image-manager-item button {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  height: 26px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(48, 39, 42, 0.76);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .card-body {
   padding: 14px;
 }

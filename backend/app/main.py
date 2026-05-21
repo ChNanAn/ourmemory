@@ -64,6 +64,41 @@ def migrate_database() -> None:
         }
         if "photo_note" not in travel_columns:
             connection.execute(text("ALTER TABLE travels ADD COLUMN photo_note TEXT DEFAULT ''"))
+        for table_name in ("foods", "hobbies"):
+            columns = {
+                row[1]
+                for row in connection.exec_driver_sql(f"PRAGMA table_info({table_name})").all()
+            }
+            if "images" not in columns:
+                connection.execute(text(f"ALTER TABLE {table_name} ADD COLUMN images JSON DEFAULT '[]'"))
+
+
+def normalize_image_data(data: dict, force: bool = False) -> dict:
+    if not force and "image" not in data and "images" not in data:
+        return data
+
+    images = data.get("images")
+    image = data.get("image")
+    if images is None:
+        images = [image] if image else []
+    if image and image not in images:
+        images = [image, *images]
+    data["images"] = images
+    data["image"] = images[0] if images else None
+    return data
+
+
+def sync_existing_image_lists(db: Session) -> None:
+    for record in db.scalars(select(Food)):
+        if record.image and not record.images:
+            record.images = [record.image]
+        if record.images:
+            record.image = record.images[0]
+    for record in db.scalars(select(Hobby)):
+        if record.image and not record.images:
+            record.images = [record.image]
+        if record.images:
+            record.image = record.images[0]
 
 
 def seed_demo_data() -> None:
@@ -72,13 +107,15 @@ def seed_demo_data() -> None:
         has_food = db.scalar(select(Food.id).limit(1))
         has_travel = db.scalar(select(Travel.id).limit(1))
         has_wish = db.scalar(select(Wish.id).limit(1))
-        has_hobby = db.scalar(select(Hobby.id).limit(1))
 
         if not has_food:
             db.add(
                 Food(
                     title="周末早午餐",
                     image="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=80",
+                    images=[
+                        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=900&q=80"
+                    ],
                     location="街角小店",
                     note="阳光很好，沙拉和咖啡都很清爽。",
                     rating=4,
@@ -107,6 +144,9 @@ def seed_demo_data() -> None:
                 "title": "朵朵推荐的歌单",
                 "category": "音乐",
                 "image": "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "朵朵提过的几首歌",
                 "note": "适合散步、通勤或者休息时慢慢听。",
             },
@@ -114,6 +154,7 @@ def seed_demo_data() -> None:
                 "title": "旗袍灵感",
                 "category": "穿搭",
                 "image": None,
+                "images": [],
                 "duoduo_element": "朵朵喜欢旗袍",
                 "note": "可以记录喜欢的款式、颜色、店铺和适合拍照的场景。",
             },
@@ -121,6 +162,9 @@ def seed_demo_data() -> None:
                 "title": "种花小记录",
                 "category": "种花",
                 "image": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "给花花草草留一点生长记录",
                 "note": "记录花名、浇水时间、开花状态和养护小心得。",
             },
@@ -128,6 +172,9 @@ def seed_demo_data() -> None:
                 "title": "画画练习",
                 "category": "画画",
                 "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "把画过的东西慢慢收起来",
                 "note": "可以放草稿、完成图、灵感来源和下次想尝试的主题。",
             },
@@ -135,6 +182,9 @@ def seed_demo_data() -> None:
                 "title": "运动打卡",
                 "category": "运动",
                 "image": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "轻松记录运动状态",
                 "note": "散步、跑步、瑜伽或其他运动都可以记一点感受。",
             },
@@ -142,6 +192,9 @@ def seed_demo_data() -> None:
                 "title": "探索新地图",
                 "category": "旅游",
                 "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "朵朵喜欢去看看不一样的地方",
                 "note": "记录想去的城市、路线、小店、展览和路上的发现。",
             },
@@ -149,6 +202,9 @@ def seed_demo_data() -> None:
                 "title": "积木时间",
                 "category": "积木",
                 "image": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "把搭过的作品留个档",
                 "note": "可以记录套装名称、完成进度、成品照片和缺件情况。",
             },
@@ -156,6 +212,9 @@ def seed_demo_data() -> None:
                 "title": "拼图进度",
                 "category": "拼图",
                 "image": "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "慢慢拼出来的小成就",
                 "note": "记录片数、主题、完成进度和最后成品。",
             },
@@ -163,6 +222,9 @@ def seed_demo_data() -> None:
                 "title": "拍照灵感",
                 "category": "拍照",
                 "image": "https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?auto=format&fit=crop&w=900&q=80",
+                "images": [
+                    "https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?auto=format&fit=crop&w=900&q=80"
+                ],
                 "duoduo_element": "记录想拍的画面和角度",
                 "note": "可以写拍照地点、光线、姿势、道具和成片想法。",
             },
@@ -187,11 +249,15 @@ def seed_demo_data() -> None:
         block_hobby = db.scalar(select(Hobby).where(Hobby.title == "积木时间").limit(1))
         if block_hobby and not block_hobby.image:
             block_hobby.image = "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=900&q=80"
+            block_hobby.images = [block_hobby.image]
         puzzle_hobby = db.scalar(select(Hobby).where(Hobby.title == "拼图进度").limit(1))
         if puzzle_hobby and puzzle_hobby.image == "/static/images/puzzle-cover.jpg":
             puzzle_hobby.image = "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=900&q=80"
+            puzzle_hobby.images = [puzzle_hobby.image]
         elif puzzle_hobby and not puzzle_hobby.image:
             puzzle_hobby.image = "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=900&q=80"
+            puzzle_hobby.images = [puzzle_hobby.image]
+        sync_existing_image_lists(db)
         db.commit()
     finally:
         db.close()
@@ -221,7 +287,7 @@ def list_food(db: Session = Depends(get_db)) -> list[Food]:
 
 @app.post("/api/food", response_model=FoodOut, status_code=201)
 def create_food(payload: FoodCreate, db: Session = Depends(get_db)) -> Food:
-    food = Food(**payload.model_dump())
+    food = Food(**normalize_image_data(payload.model_dump(), force=True))
     db.add(food)
     db.commit()
     db.refresh(food)
@@ -243,6 +309,7 @@ def update_food(food_id: int, payload: FoodUpdate, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Food not found")
 
     data = payload.model_dump(exclude_unset=True)
+    normalize_image_data(data)
     for key, value in data.items():
         setattr(food, key, value)
     db.commit()
@@ -351,7 +418,7 @@ def list_hobbies(db: Session = Depends(get_db)) -> list[Hobby]:
 
 @app.post("/api/hobby", response_model=HobbyOut, status_code=201)
 def create_hobby(payload: HobbyCreate, db: Session = Depends(get_db)) -> Hobby:
-    hobby = Hobby(**payload.model_dump())
+    hobby = Hobby(**normalize_image_data(payload.model_dump(), force=True))
     db.add(hobby)
     db.commit()
     db.refresh(hobby)
@@ -373,6 +440,7 @@ def update_hobby(hobby_id: int, payload: HobbyUpdate, db: Session = Depends(get_
         raise HTTPException(status_code=404, detail="Hobby not found")
 
     data = payload.model_dump(exclude_unset=True)
+    normalize_image_data(data)
     for key, value in data.items():
         setattr(hobby, key, value)
     db.commit()

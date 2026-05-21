@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 class FoodBase(BaseModel):
     title: str = Field(min_length=1, max_length=120)
     image: str | None = None
+    images: list[str] = Field(default_factory=list)
     location: str = ""
     note: str = ""
     rating: int | None = Field(default=None, ge=1, le=5)
@@ -18,6 +19,7 @@ class FoodCreate(FoodBase):
 class FoodUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=120)
     image: str | None = None
+    images: list[str] | None = None
     location: str | None = None
     note: str | None = None
     rating: int | None = Field(default=None, ge=1, le=5)
@@ -84,6 +86,7 @@ class HobbyBase(BaseModel):
     title: str = Field(min_length=1, max_length=120)
     category: str = ""
     image: str | None = None
+    images: list[str] = Field(default_factory=list)
     duoduo_element: str = ""
     note: str = ""
 
@@ -96,6 +99,7 @@ class HobbyUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=120)
     category: str | None = None
     image: str | None = None
+    images: list[str] | None = None
     duoduo_element: str | None = None
     note: str | None = None
 

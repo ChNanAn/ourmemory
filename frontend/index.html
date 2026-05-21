@@ -83,11 +83,12 @@
             <form class="panel form-panel" id="food-form">
               <h2 id="food-form-title">新增美食</h2>
               <input name="id" type="hidden" />
-              <input name="existingImage" type="hidden" />
+              <input name="existingImages" type="hidden" />
               <label>店名或食物<input name="title" required maxlength="120" /></label>
               <label>位置<input name="location" maxlength="160" /></label>
               <label>评分<input name="rating" type="number" min="1" max="5" placeholder="1-5" /></label>
-              <label>图片<input name="imageFile" type="file" accept="image/*" /></label>
+              <label>图片<input name="imageFiles" type="file" accept="image/*" multiple /></label>
+              <div class="image-manager" data-image-manager="food-form"></div>
               <label>简短描述<textarea name="note" rows="4"></textarea></label>
               <div class="form-actions">
                 <button class="primary-button" type="submit">保存美食</button>
@@ -107,6 +108,7 @@
               <label>城市或地点<input name="city" required maxlength="120" /></label>
               <label>日期<input name="date" type="date" /></label>
               <label>照片<input name="imageFiles" type="file" accept="image/*" multiple /></label>
+              <div class="image-manager" data-image-manager="travel-form"></div>
               <label>照片/文件说明<textarea name="photo_note" rows="3" placeholder="比如：照片拍摄地点、路线、票据或文件备注"></textarea></label>
               <label>故事<textarea name="story" rows="5"></textarea></label>
               <div class="form-actions">
@@ -123,11 +125,12 @@
             <form class="panel form-panel" id="hobby-form">
               <h2 id="hobby-form-title">新增爱好</h2>
               <input name="id" type="hidden" />
-              <input name="existingImage" type="hidden" />
+              <input name="existingImages" type="hidden" />
               <label>爱好名称<input name="title" required maxlength="120" placeholder="比如：拍照灵感" /></label>
               <label>分类<input name="category" maxlength="80" placeholder="旗袍 / 种花 / 画画 / 运动" /></label>
               <label>和朵朵有关的点<input name="duoduo_element" maxlength="180" placeholder="比如：朵朵提过 / 一起试过" /></label>
-              <label>图片<input name="imageFile" type="file" accept="image/*" /></label>
+              <label>图片<input name="imageFiles" type="file" accept="image/*" multiple /></label>
+              <div class="image-manager" data-image-manager="hobby-form"></div>
               <label>备注<textarea name="note" rows="4" placeholder="记录一点细节"></textarea></label>
               <div class="form-actions">
                 <button class="primary-button" type="submit">保存爱好</button>

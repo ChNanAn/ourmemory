@@ -101,6 +101,67 @@ async function uploadFiles(files) {
   return Promise.all(uploads);
 }
 
+function recordImages(item) {
+  if (Array.isArray(item.images) && item.images.length) return item.images;
+  if (item.image) return [item.image];
+  return [];
+}
+
+function firstImage(item) {
+  return recordImages(item)[0] || null;
+}
+
+function parseImages(form) {
+  const value = form.elements.existingImages?.value;
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function setFormImages(formId, images) {
+  const form = $(`#${formId}`);
+  if (!form?.elements.existingImages) return;
+  form.elements.existingImages.value = JSON.stringify(images);
+  renderFormImages(formId, images);
+}
+
+function renderFormImages(formId, images) {
+  const container = document.querySelector(`[data-image-manager="${formId}"]`);
+  if (!container) return;
+  container.innerHTML = "";
+  if (!images.length) {
+    container.classList.remove("active");
+    return;
+  }
+
+  container.classList.add("active");
+  container.innerHTML = `
+    <p>当前图片</p>
+    <div class="image-manager-grid">
+      ${images
+        .map(
+          (image, index) => `
+            <div class="image-manager-item">
+              <img src="${escapeHtml(image)}" alt="第 ${index + 1} 张图片" />
+              <button type="button" data-remove-image="${index}">删除</button>
+            </div>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+  container.querySelectorAll("[data-remove-image]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextImages = images.filter((_, index) => index !== Number(button.dataset.removeImage));
+      setFormImages(formId, nextImages);
+    });
+  });
+}
+
 function switchView(view) {
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.view === view);
@@ -115,12 +176,31 @@ function imageMarkup(src, alt) {
   return `<img class="record-image" src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />`;
 }
 
+function galleryMarkup(images, alt) {
+  if (!images.length) return '<div class="placeholder-image" aria-hidden="true"></div>';
+  const [cover, ...rest] = images;
+  return `
+    <div class="record-gallery">
+      ${imageMarkup(cover, alt)}
+      ${
+        rest.length
+          ? `<div class="record-thumbs">${rest
+              .slice(0, 4)
+              .map((image) => `<img src="${escapeHtml(image)}" alt="${escapeHtml(alt)}" />`)
+              .join("")}</div>`
+          : ""
+      }
+    </div>
+  `;
+}
+
 function resetForm(formId) {
   const form = $(`#${formId}`);
   form.reset();
   form.querySelectorAll('input[type="hidden"]').forEach((input) => {
     input.value = "";
   });
+  renderFormImages(formId, []);
   const titleMap = {
     "food-form": "新增美食",
     "travel-form": "新增旅行",
@@ -141,7 +221,7 @@ function editFood(item) {
   switchView("food");
   const form = $("#food-form");
   form.elements.id.value = item.id;
-  form.elements.existingImage.value = item.image || "";
+  setFormImages("food-form", recordImages(item));
   form.elements.title.value = item.title || "";
   form.elements.location.value = item.location || "";
   form.elements.rating.value = item.rating || "";
@@ -154,7 +234,7 @@ function editTravel(item) {
   switchView("travel");
   const form = $("#travel-form");
   form.elements.id.value = item.id;
-  form.elements.existingImages.value = JSON.stringify(item.images || []);
+  setFormImages("travel-form", item.images || []);
   form.elements.city.value = item.city || "";
   form.elements.date.value = toDateInputValue(item.date);
   form.elements.photo_note.value = item.photo_note || "";
@@ -167,7 +247,7 @@ function editHobby(item) {
   switchView("hobby");
   const form = $("#hobby-form");
   form.elements.id.value = item.id;
-  form.elements.existingImage.value = item.image || "";
+  setFormImages("hobby-form", recordImages(item));
   form.elements.title.value = item.title || "";
   form.elements.category.value = item.category || "";
   form.elements.duoduo_element.value = item.duoduo_element || "";
@@ -197,7 +277,7 @@ function renderFood() {
     const article = document.createElement("article");
     article.className = "record-card";
     article.innerHTML = `
-      ${imageMarkup(item.image, item.title)}
+      ${galleryMarkup(recordImages(item), item.title)}
       <div class="card-body">
         <h2>${escapeHtml(item.title)}</h2>
         <p class="note">${escapeHtml(item.note || "还没有备注。")}</p>
@@ -298,7 +378,7 @@ function renderHobby() {
     const article = document.createElement("article");
     article.className = "record-card hobby-card";
     article.innerHTML = `
-      ${imageMarkup(item.image, item.title)}
+      ${galleryMarkup(recordImages(item), item.title)}
       <div class="card-body">
         <p class="eyebrow">${escapeHtml(item.category || "朵朵相关")}</p>
         <h2>${escapeHtml(item.title)}</h2>
@@ -328,9 +408,9 @@ function renderHome() {
   const recent = $("#recent-records");
   recent.innerHTML = "";
   const items = [
-    ...state.food.map((item) => ({ type: "美食", title: item.title, image: item.image, note: item.note, time: item.created_at })),
+    ...state.food.map((item) => ({ type: "美食", title: item.title, image: firstImage(item), note: item.note, time: item.created_at })),
     ...state.travel.map((item) => ({ type: "旅行", title: item.city, image: item.images[0], note: item.photo_note || item.story, time: item.created_at })),
-    ...state.hobby.map((item) => ({ type: "爱好", title: item.title, image: item.image, note: item.duoduo_element || item.note, time: item.created_at })),
+    ...state.hobby.map((item) => ({ type: "爱好", title: item.title, image: firstImage(item), note: item.duoduo_element || item.note, time: item.created_at })),
   ]
     .sort((recordA, recordB) => new Date(recordB.time) - new Date(recordA.time))
     .slice(0, 6);
@@ -391,14 +471,14 @@ function bindEvents() {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
-    const imageFile = data.get("imageFile");
-    const existingImage = data.get("existingImage") || null;
-    const uploaded = imageFile && imageFile.size ? await uploadFile(imageFile) : { url: existingImage };
+    const uploaded = await uploadFiles(data.getAll("imageFiles").filter((file) => file.size));
+    const images = [...parseImages(form), ...uploaded.map((item) => item.url)];
     const payload = {
       title: data.get("title"),
       location: data.get("location"),
       rating: data.get("rating") ? Number(data.get("rating")) : null,
-      image: uploaded.url,
+      image: images[0] || null,
+      images,
       note: data.get("note"),
     };
     const id = data.get("id");
@@ -416,8 +496,7 @@ function bindEvents() {
     const form = event.currentTarget;
     const data = new FormData(form);
     const uploaded = await uploadFiles(data.getAll("imageFiles").filter((file) => file.size));
-    const existingImages = data.get("existingImages") ? JSON.parse(data.get("existingImages")) : [];
-    const images = uploaded.length ? uploaded.map((item) => item.url) : existingImages;
+    const images = [...parseImages(form), ...uploaded.map((item) => item.url)];
     const payload = {
       city: data.get("city"),
       date: data.get("date") ? new Date(data.get("date")).toISOString() : null,
@@ -439,13 +518,13 @@ function bindEvents() {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
-    const imageFile = data.get("imageFile");
-    const existingImage = data.get("existingImage") || null;
-    const uploaded = imageFile && imageFile.size ? await uploadFile(imageFile) : { url: existingImage };
+    const uploaded = await uploadFiles(data.getAll("imageFiles").filter((file) => file.size));
+    const images = [...parseImages(form), ...uploaded.map((item) => item.url)];
     const payload = {
       title: data.get("title"),
       category: data.get("category"),
-      image: uploaded.url,
+      image: images[0] || null,
+      images,
       duoduo_element: data.get("duoduo_element"),
       note: data.get("note"),
     };

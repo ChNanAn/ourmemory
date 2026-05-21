@@ -4,10 +4,11 @@
 
 ## 功能
 
-- 美食记录：标题、图片、位置、备注、评分
+- 美食记录：标题、多图、位置、备注、评分
 - 旅行记录：城市、日期、多图、照片/文件说明、故事
-- 爱好记录：名称、分类、图片、和朵朵有关的点、备注；默认包含旗袍、种花、画画、运动、旅游探索、积木、拼图、拍照等灵感
-- 愿望清单：新增、完成状态切换、删除
+- 爱好记录：名称、分类、多图、和朵朵有关的点、备注；默认包含旗袍、种花、画画、运动、旅游探索、积木、拼图、拍照等灵感
+- 愿望清单：新增、编辑、完成状态切换、删除
+- 编辑记录时可以保留、追加或单独删除某一张图片
 - SQLite 本地数据存储
 - 本地 uploads 图片存储
 - FastAPI 托管静态前端页面
@@ -98,14 +99,17 @@ docker-compose up -d
 - `GET /api/food`
 - `POST /api/food`
 - `GET /api/food/{id}`
+- `PATCH /api/food/{id}`
 - `DELETE /api/food/{id}`
 - `GET /api/travel`
 - `POST /api/travel`
 - `GET /api/travel/{id}`
+- `PATCH /api/travel/{id}`
 - `DELETE /api/travel/{id}`
 - `GET /api/hobby`
 - `POST /api/hobby`
 - `GET /api/hobby/{id}`
+- `PATCH /api/hobby/{id}`
 - `DELETE /api/hobby/{id}`
 - `GET /api/wish`
 - `POST /api/wish`
