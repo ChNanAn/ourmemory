@@ -97,22 +97,82 @@ def seed_demo_data() -> None:
                 demo_travel.photo_note = "海边照片，适合放一些当时的天气、路线或者文件说明。"
         if not has_wish:
             db.add(Wish(content="找一个周末去海边看日落"))
-        if not has_hobby:
-            db.add(
-                Hobby(
-                    title="朵朵推荐的歌单",
-                    category="音乐",
-                    image="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80",
-                    duoduo_element="朵朵提过的几首歌",
-                    note="适合散步、通勤或者休息时慢慢听。",
-                )
-            )
-        else:
-            demo_hobby = db.scalar(select(Hobby).where(Hobby.title.in_(["朵朵的歌单", "朵朵推荐的歌单"])).limit(1))
+        hobby_seeds = [
+            {
+                "title": "朵朵推荐的歌单",
+                "category": "音乐",
+                "image": "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80",
+                "duoduo_element": "朵朵提过的几首歌",
+                "note": "适合散步、通勤或者休息时慢慢听。",
+            },
+            {
+                "title": "旗袍灵感",
+                "category": "穿搭",
+                "image": None,
+                "duoduo_element": "朵朵喜欢旗袍",
+                "note": "可以记录喜欢的款式、颜色、店铺和适合拍照的场景。",
+            },
+            {
+                "title": "种花小记录",
+                "category": "种花",
+                "image": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=900&q=80",
+                "duoduo_element": "给花花草草留一点生长记录",
+                "note": "记录花名、浇水时间、开花状态和养护小心得。",
+            },
+            {
+                "title": "画画练习",
+                "category": "画画",
+                "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=900&q=80",
+                "duoduo_element": "把画过的东西慢慢收起来",
+                "note": "可以放草稿、完成图、灵感来源和下次想尝试的主题。",
+            },
+            {
+                "title": "运动打卡",
+                "category": "运动",
+                "image": "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=900&q=80",
+                "duoduo_element": "轻松记录运动状态",
+                "note": "散步、跑步、瑜伽或其他运动都可以记一点感受。",
+            },
+            {
+                "title": "探索不同的地方",
+                "category": "旅游",
+                "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+                "duoduo_element": "朵朵喜欢去看看不一样的地方",
+                "note": "记录想去的城市、路线、小店、展览和路上的发现。",
+            },
+            {
+                "title": "积木时间",
+                "category": "积木",
+                "image": None,
+                "duoduo_element": "把搭过的作品留个档",
+                "note": "可以记录套装名称、完成进度、成品照片和缺件情况。",
+            },
+            {
+                "title": "拼图进度",
+                "category": "拼图",
+                "image": None,
+                "duoduo_element": "慢慢拼出来的小成就",
+                "note": "记录片数、主题、完成进度和最后成品。",
+            },
+            {
+                "title": "拍照灵感",
+                "category": "拍照",
+                "image": "https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?auto=format&fit=crop&w=900&q=80",
+                "duoduo_element": "记录想拍的画面和角度",
+                "note": "可以写拍照地点、光线、姿势、道具和成片想法。",
+            },
+        ]
+        existing_hobby_titles = set(db.scalars(select(Hobby.title)))
+        if "朵朵的歌单" in existing_hobby_titles:
+            demo_hobby = db.scalar(select(Hobby).where(Hobby.title == "朵朵的歌单").limit(1))
             if demo_hobby:
                 demo_hobby.title = "朵朵推荐的歌单"
                 demo_hobby.duoduo_element = "朵朵提过的几首歌"
                 demo_hobby.note = "适合散步、通勤或者休息时慢慢听。"
+                existing_hobby_titles.add("朵朵推荐的歌单")
+        for hobby_seed in hobby_seeds:
+            if hobby_seed["title"] not in existing_hobby_titles:
+                db.add(Hobby(**hobby_seed))
         db.commit()
     finally:
         db.close()
