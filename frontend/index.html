@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Life</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Memory Life</p>
+          <h1>生活记录册</h1>
+        </div>
+        <nav class="tabs" aria-label="页面导航">
+          <button class="tab active" data-view="home">首页</button>
+          <button class="tab" data-view="food">美食</button>
+          <button class="tab" data-view="travel">旅行</button>
+          <button class="tab" data-view="wish">愿望</button>
+        </nav>
+      </header>
+
+      <main>
+        <section class="view active" id="home-view">
+          <div class="welcome-panel">
+            <div>
+              <p class="eyebrow">今天也有值得留下的片段</p>
+              <h2>把吃过的、走过的、想做的事放在一起。</h2>
+            </div>
+            <div class="stats-grid">
+              <div class="stat"><span id="food-count">0</span><small>美食</small></div>
+              <div class="stat"><span id="travel-count">0</span><small>旅行</small></div>
+              <div class="stat"><span id="wish-count">0</span><small>愿望</small></div>
+            </div>
+          </div>
+
+          <div class="section-head">
+            <h2>最近记录</h2>
+          </div>
+          <div class="record-grid" id="recent-records"></div>
+        </section>
+
+        <section class="view" id="food-view">
+          <div class="two-column">
+            <form class="panel form-panel" id="food-form">
+              <h2>新增美食</h2>
+              <label>店名或食物<input name="title" required maxlength="120" /></label>
+              <label>位置<input name="location" maxlength="160" /></label>
+              <label>评分<input name="rating" type="number" min="1" max="5" placeholder="1-5" /></label>
+              <label>图片<input name="imageFile" type="file" accept="image/*" /></label>
+              <label>简短描述<textarea name="note" rows="4"></textarea></label>
+              <button class="primary-button" type="submit">保存美食</button>
+            </form>
+            <div class="record-grid" id="food-list"></div>
+          </div>
+        </section>
+
+        <section class="view" id="travel-view">
+          <div class="two-column">
+            <form class="panel form-panel" id="travel-form">
+              <h2>新增旅行</h2>
+              <label>城市或地点<input name="city" required maxlength="120" /></label>
+              <label>日期<input name="date" type="date" /></label>
+              <label>照片<input name="imageFiles" type="file" accept="image/*" multiple /></label>
+              <label>故事<textarea name="story" rows="5"></textarea></label>
+              <button class="primary-button" type="submit">保存旅行</button>
+            </form>
+            <div class="timeline" id="travel-list"></div>
+          </div>
+        </section>
+
+        <section class="view" id="wish-view">
+          <div class="wish-layout">
+            <form class="panel wish-form" id="wish-form">
+              <input name="content" required maxlength="240" placeholder="想一起完成什么？" />
+              <button class="primary-button" type="submit">添加</button>
+            </form>
+            <div class="wish-list" id="wish-list"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="empty-template">
+      <div class="empty-state">还没有记录，先添加一条。</div>
+    </template>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
