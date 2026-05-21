@@ -21,9 +21,20 @@
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   background: var(--bg);
   color: var(--ink);
   font-family: Inter, "PingFang SC", "HarmonyOS Sans", system-ui, sans-serif;
+}
+
+main,
+.topbar > *,
+.welcome-panel > *,
+.duoduo-panel > *,
+.two-column > *,
+.timeline-item > *,
+.view {
+  min-width: 0;
 }
 
 .soft-hearts {
@@ -655,8 +666,8 @@ textarea:focus {
 
 @media (max-width: 820px) {
   .app-shell {
-    width: min(100% - 20px, 1180px);
-    padding-top: 14px;
+    width: 100%;
+    padding: 14px 12px 36px;
   }
 
   .topbar,
@@ -669,28 +680,122 @@ textarea:focus {
   }
 
   .topbar {
+    flex-direction: column;
     align-items: stretch;
+    gap: 14px;
+    margin-bottom: 18px;
   }
 
   .tabs {
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    width: 100%;
+    gap: 4px;
+    padding: 4px;
+    overflow: visible;
+  }
+
+  .tab {
+    min-width: 0;
+    height: 36px;
+    padding: 0 4px;
+    font-size: 14px;
   }
 
   .form-panel {
     position: static;
   }
 
+  .welcome-panel,
+  .duoduo-panel {
+    gap: 16px;
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat {
+    min-height: 78px;
+  }
+
   h1 {
-    font-size: 34px;
+    font-size: 32px;
   }
 
   .welcome-panel h2 {
-    font-size: 30px;
+    font-size: 28px;
+  }
+
+  .record-grid,
+  .image-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .record-card,
+  .timeline-item,
+  .wish-item {
+    min-width: 0;
+  }
+
+  .wish-item {
+    grid-template-columns: 28px minmax(0, 1fr) auto 34px;
+    gap: 8px;
   }
 
   .secret-note {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .app-shell {
+    padding-inline: 10px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .welcome-panel h2 {
+    font-size: 24px;
+  }
+
+  .tabs {
+    gap: 3px;
+    padding: 3px;
+  }
+
+  .tab {
+    height: 34px;
+    font-size: 13px;
+  }
+
+  .welcome-panel,
+  .duoduo-panel,
+  .form-panel,
+  .timeline-item {
+    padding: 14px;
+  }
+
+  .stat span,
+  .anniversary-card strong {
+    font-size: 24px;
+  }
+
+  .card-body {
+    padding: 12px;
+  }
+
+  .card-actions {
+    padding: 0 12px 12px;
   }
 }
 
