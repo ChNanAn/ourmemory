@@ -37,7 +37,7 @@ docker run --rm -p 8000:8000 memory-life
 
 ### 1. 服务器准备
 
-在云服务器安全组/防火墙里放行 TCP `8000` 端口。
+在云服务器安全组/防火墙里放行 TCP `80` 端口。
 
 服务器安装 Docker 和 Docker Compose 后执行：
 
@@ -50,8 +50,10 @@ docker compose up -d --build
 启动后手机打开：
 
 ```text
-http://服务器公网IP:8000
+http://服务器公网IP
 ```
+
+如果服务器的 `80` 端口已经被 Nginx、Apache 或其他服务占用，先停止占用服务，或者把 `docker-compose.yml` 里的端口改回 `8000:8000`。
 
 ### 2. 常用命令
 
