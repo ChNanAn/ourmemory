@@ -1,0 +1,14 @@
+version: "3.3"
+
+services:
+  memory-life:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: memory-life
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/uploads:/app/uploads

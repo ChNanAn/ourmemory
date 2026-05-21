@@ -31,6 +31,46 @@ docker build -f backend/Dockerfile -t memory-life .
 docker run --rm -p 8000:8000 memory-life
 ```
 
+## 服务器部署
+
+最简单方式是用 Docker Compose 部署到云服务器，然后手机访问服务器公网 IP。
+
+### 1. 服务器准备
+
+在云服务器安全组/防火墙里放行 TCP `8000` 端口。
+
+服务器安装 Docker 和 Docker Compose 后执行：
+
+```bash
+git clone git@github.com:ChNanAn/ourmemory.git
+cd ourmemory
+docker compose up -d --build
+```
+
+启动后手机打开：
+
+```text
+http://服务器公网IP:8000
+```
+
+### 2. 常用命令
+
+```bash
+docker compose ps
+docker compose logs -f
+docker compose restart
+docker compose down
+```
+
+### 3. 更新部署
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+SQLite 数据会保存在 `backend/data/`，上传图片会保存在 `backend/uploads/`。
+
 ## API
 
 - `GET /api/food`
