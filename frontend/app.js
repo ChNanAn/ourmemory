@@ -418,7 +418,7 @@ function renderHomeCards(selector, items, emptyText) {
       <div class="home-card-body">
         <p class="eyebrow">${escapeHtml(item.label)}</p>
         <h2>${escapeHtml(item.title)}</h2>
-        <p class="note">${escapeHtml(item.note || "这一天的小细节，先轻轻放在这里。")}</p>
+        <p class="note">${escapeHtml(item.note || "一条新的生活片段。")}</p>
       </div>
     `;
     list.append(article);
