@@ -142,7 +142,7 @@ h2 {
 }
 
 .tab {
-  min-width: 64px;
+  min-width: 72px;
   height: 38px;
   border: 0;
   border-radius: 6px;
@@ -168,7 +168,7 @@ h2 {
   position: relative;
   display: flex;
   align-items: center;
-  min-height: clamp(460px, 66vh, 720px);
+  min-height: clamp(640px, 78vh, 900px);
   overflow: hidden;
   padding: clamp(28px, 6vw, 72px);
   margin-bottom: 24px;
@@ -210,6 +210,11 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: var(--shadow);
+}
+
+.about-page-panel {
+  margin: 0 auto;
+  max-width: 920px;
 }
 
 .about-panel h2 {
@@ -831,7 +836,7 @@ textarea:focus {
 
   .tabs {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     width: 100%;
     gap: 4px;
     padding: 4px;
@@ -850,7 +855,7 @@ textarea:focus {
   }
 
   .home-hero {
-    min-height: 520px;
+    min-height: 640px;
     padding: 24px;
     background:
       linear-gradient(0deg, rgba(33, 24, 26, 0.66), rgba(33, 24, 26, 0.08) 62%),
@@ -934,7 +939,7 @@ textarea:focus {
   }
 
   .home-hero {
-    min-height: 480px;
+    min-height: 580px;
     padding: 20px;
   }
 
