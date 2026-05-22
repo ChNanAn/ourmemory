@@ -30,52 +30,48 @@
 
       <main>
         <section class="view active" id="home-view">
-          <div class="welcome-panel">
+          <section class="home-hero" aria-label="首页封面">
+            <div class="home-hero-copy">
+              <h2>慢慢记录生活。</h2>
+              <p>从春天开始</p>
+            </div>
+          </section>
+
+          <section class="about-panel">
             <div>
-              <p class="eyebrow">从 2 月 15 日开始</p>
-              <h2>把和朵朵有关的小日子，轻轻收好。</h2>
+              <p class="eyebrow">关于我们</p>
+              <h2>把小日子轻轻收好。</h2>
+              <p>2.15 那天开始的小默契，还在继续。美食、旅行、爱好和愿望，都慢慢放在这里。</p>
             </div>
-            <div class="home-summary">
-              <div class="stats-grid">
-                <div class="stat"><span id="food-count">0</span><small>美食</small></div>
-                <div class="stat"><span id="travel-count">0</span><small>旅行</small></div>
-                <div class="stat"><span id="hobby-count">0</span><small>爱好</small></div>
-                <div class="stat"><span id="wish-count">0</span><small>愿望</small></div>
+            <div class="anniversary-card">
+              <p>认识第 <strong id="known-days">0</strong> 天</p>
+              <span>距离下一个 2.15 还有 <strong id="next-anniversary-days">0</strong> 天</span>
+            </div>
+          </section>
+
+          <div class="home-sections">
+            <section class="home-section">
+              <div class="section-head">
+                <h2>最近美食</h2>
+                <button class="text-button" type="button" data-jump-view="food">去看看</button>
               </div>
-              <div class="anniversary-card">
-                <p>认识第 <strong id="known-days">0</strong> 天</p>
-                <span>距离下一个 2.15 还有 <strong id="next-anniversary-days">0</strong> 天</span>
+              <div class="home-card-list" id="home-food-list"></div>
+            </section>
+            <section class="home-section">
+              <div class="section-head">
+                <h2>旅行</h2>
+                <button class="text-button" type="button" data-jump-view="travel">去看看</button>
               </div>
-            </div>
+              <div class="home-card-list" id="home-travel-list"></div>
+            </section>
+            <section class="home-section">
+              <div class="section-head">
+                <h2>愿望</h2>
+                <button class="text-button" type="button" data-jump-view="wish">去看看</button>
+              </div>
+              <div class="home-wish-list" id="home-wish-list"></div>
+            </section>
           </div>
-
-          <div class="duoduo-panel">
-            <div>
-              <p class="eyebrow">朵朵兴趣角</p>
-              <h2>她喜欢的，都值得慢慢记。</h2>
-              <p>旗袍、种花、画画、运动、探索新地方、积木、拼图、拍照。</p>
-            </div>
-            <div class="duoduo-tags">
-              <span>旗袍</span>
-              <span>种花</span>
-              <span>画画</span>
-              <span>运动</span>
-              <span>旅游探索</span>
-              <span>积木</span>
-              <span>拼图</span>
-              <span>拍照</span>
-            </div>
-          </div>
-
-          <div class="secret-note">
-            <span>悄悄话</span>
-            <p>2.15 那天开始的小默契，还在继续。</p>
-          </div>
-
-          <div class="section-head">
-            <h2>最近记录</h2>
-          </div>
-          <div class="record-grid" id="recent-records"></div>
         </section>
 
         <section class="view" id="food-view">

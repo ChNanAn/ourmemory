@@ -399,40 +399,79 @@ function renderHobby() {
   });
 }
 
-function renderHome() {
-  $("#food-count").textContent = state.food.length;
-  $("#travel-count").textContent = state.travel.length;
-  $("#hobby-count").textContent = state.hobby.length;
-  $("#wish-count").textContent = state.wish.length;
-
-  const recent = $("#recent-records");
-  recent.innerHTML = "";
-  const items = [
-    ...state.food.map((item) => ({ type: "美食", title: item.title, image: firstImage(item), note: item.note, time: item.created_at })),
-    ...state.travel.map((item) => ({ type: "旅行", title: item.city, image: item.images[0], note: item.photo_note || item.story, time: item.created_at })),
-    ...state.hobby.map((item) => ({ type: "爱好", title: item.title, image: firstImage(item), note: item.duoduo_element || item.note, time: item.created_at })),
-  ]
-    .sort((recordA, recordB) => new Date(recordB.time) - new Date(recordA.time))
-    .slice(0, 6);
-
+function renderHomeCards(selector, items, emptyText) {
+  const list = $(selector);
+  if (!list) return;
+  list.innerHTML = "";
   if (!items.length) {
-    recent.append(emptyNode());
+    const empty = emptyNode();
+    empty.textContent = emptyText;
+    list.append(empty);
     return;
   }
 
   items.forEach((item) => {
     const article = document.createElement("article");
-    article.className = "record-card";
+    article.className = "home-card";
     article.innerHTML = `
       ${imageMarkup(item.image, item.title)}
-      <div class="card-body">
-        <p class="eyebrow">${escapeHtml(item.type)}</p>
+      <div class="home-card-body">
+        <p class="eyebrow">${escapeHtml(item.label)}</p>
         <h2>${escapeHtml(item.title)}</h2>
         <p class="note">${escapeHtml(item.note || "一条新的生活片段。")}</p>
       </div>
     `;
-    recent.append(article);
+    list.append(article);
   });
+}
+
+function renderHomeWishes() {
+  const list = $("#home-wish-list");
+  if (!list) return;
+  list.innerHTML = "";
+  const items = state.wish.slice(0, 5);
+  if (!items.length) {
+    const empty = emptyNode();
+    empty.textContent = "还没有愿望，先写一个想一起完成的小事。";
+    list.append(empty);
+    return;
+  }
+
+  items.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = `home-wish-item${item.done ? " done" : ""}`;
+    row.innerHTML = `
+      <span aria-hidden="true"></span>
+      <p>${escapeHtml(item.content)}</p>
+    `;
+    list.append(row);
+  });
+}
+
+function renderHome() {
+  renderHomeCards(
+    "#home-food-list",
+    state.food.slice(0, 3).map((item) => ({
+      label: item.location || "最近美食",
+      title: item.title,
+      image: firstImage(item),
+      note: item.note,
+    })),
+    "还没有美食记录，先添加一条。",
+  );
+
+  renderHomeCards(
+    "#home-travel-list",
+    state.travel.slice(0, 3).map((item) => ({
+      label: item.date ? formatDate(item.date) : "旅行",
+      title: item.city,
+      image: item.images[0],
+      note: item.photo_note || item.story,
+    })),
+    "还没有旅行记录，先留下一段路上的故事。",
+  );
+
+  renderHomeWishes();
 }
 
 function renderAll() {
@@ -461,6 +500,10 @@ async function loadAll() {
 function bindEvents() {
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.addEventListener("click", () => switchView(tab.dataset.view));
+  });
+
+  document.querySelectorAll("[data-jump-view]").forEach((button) => {
+    button.addEventListener("click", () => switchView(button.dataset.jumpView));
   });
 
   document.querySelectorAll("[data-reset-form]").forEach((button) => {

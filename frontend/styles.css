@@ -30,6 +30,9 @@ body {
 main,
 .topbar > *,
 .welcome-panel > *,
+.about-panel > *,
+.home-section,
+.home-card > *,
 .duoduo-panel > *,
 .two-column > *,
 .timeline-item > *,
@@ -159,6 +162,144 @@ h2 {
 .view.active {
   display: block;
   animation: fadeUp 360ms ease both;
+}
+
+.home-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(460px, 66vh, 720px);
+  overflow: hidden;
+  padding: clamp(28px, 6vw, 72px);
+  margin-bottom: 24px;
+  background:
+    linear-gradient(90deg, rgba(33, 24, 26, 0.62), rgba(33, 24, 26, 0.2) 54%, rgba(33, 24, 26, 0.08)),
+    url("/static/hero.jpg") center 42% / cover no-repeat;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.home-hero-copy {
+  max-width: 560px;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(33, 24, 26, 0.34);
+  transform: translateY(16%);
+}
+
+.home-hero-copy p {
+  margin: 16px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.home-hero-copy h2 {
+  max-width: 520px;
+  margin-bottom: 0;
+  font-size: clamp(46px, 7vw, 82px);
+  line-height: 1.06;
+}
+
+.about-panel {
+  display: grid;
+  grid-template-columns: 1fr minmax(260px, 340px);
+  gap: 20px;
+  align-items: center;
+  padding: 22px;
+  margin-bottom: 24px;
+  background: #fffdfa;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.about-panel h2 {
+  margin-bottom: 8px;
+  color: var(--berry);
+}
+
+.about-panel p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.home-sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.home-section {
+  min-width: 0;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.home-card-list,
+.home-wish-list {
+  display: grid;
+  gap: 12px;
+}
+
+.home-card {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdfb;
+}
+
+.home-card .record-image,
+.home-card .placeholder-image {
+  height: 100%;
+  min-height: 112px;
+  aspect-ratio: auto;
+}
+
+.home-card-body {
+  min-width: 0;
+  padding: 12px 12px 12px 0;
+}
+
+.home-card-body h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.home-wish-item {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+  background: #fff7f4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.home-wish-item span {
+  width: 8px;
+  height: 8px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: var(--berry);
+}
+
+.home-wish-item p {
+  margin-bottom: 0;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.home-wish-item.done p {
+  color: var(--muted);
+  text-decoration: line-through;
 }
 
 .welcome-panel {
@@ -672,6 +813,8 @@ textarea:focus {
 
   .topbar,
   .welcome-panel,
+  .about-panel,
+  .home-sections,
   .duoduo-panel,
   .two-column,
   .timeline-item,
@@ -706,7 +849,25 @@ textarea:focus {
     position: static;
   }
 
+  .home-hero {
+    min-height: 520px;
+    padding: 24px;
+    background:
+      linear-gradient(0deg, rgba(33, 24, 26, 0.66), rgba(33, 24, 26, 0.08) 62%),
+      url("/static/hero.jpg") center 40% / cover no-repeat;
+  }
+
+  .home-hero-copy h2 {
+    font-size: 42px;
+  }
+
+  .home-hero-copy {
+    transform: translateY(28%);
+  }
+
   .welcome-panel,
+  .about-panel,
+  .home-section,
   .duoduo-panel {
     gap: 16px;
     padding: 18px;
@@ -727,6 +888,10 @@ textarea:focus {
 
   .welcome-panel h2 {
     font-size: 28px;
+  }
+
+  .about-panel h2 {
+    font-size: 24px;
   }
 
   .record-grid,
@@ -768,6 +933,24 @@ textarea:focus {
     font-size: 24px;
   }
 
+  .home-hero {
+    min-height: 480px;
+    padding: 20px;
+  }
+
+  .home-hero-copy {
+    transform: translateY(24%);
+  }
+
+  .home-hero-copy p {
+    margin-top: 10px;
+    font-size: 15px;
+  }
+
+  .home-hero-copy h2 {
+    font-size: 36px;
+  }
+
   .tabs {
     gap: 3px;
     padding: 3px;
@@ -779,10 +962,21 @@ textarea:focus {
   }
 
   .welcome-panel,
+  .about-panel,
+  .home-section,
   .duoduo-panel,
   .form-panel,
   .timeline-item {
     padding: 14px;
+  }
+
+  .home-card {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+
+  .home-card .record-image,
+  .home-card .placeholder-image {
+    min-height: 104px;
   }
 
   .stat span,
